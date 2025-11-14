@@ -10,9 +10,13 @@ function App() {
     { name: 'Pasta', price: 0.7 },
   ];
 
+  //stati 
+  const [productsAll, setProducts] = useState(products)
+  const [cart, dispatch] = useReducer(cartReducer, []);
 
-  // R E D U C E R 
 
+
+  // R E D U C E R  
 
   function cartReducer(state, action) {
     switch (action.type) {
@@ -44,43 +48,35 @@ function App() {
         const product = action.payload;
         return state.filter(p => p.name !== product.name);
 
-
       }
+      case 'UPDATE_QUANTITY': {
+        const { product, quantity } = action.payload;
 
-      case 'UPDATE_QUANTITY':
-        // Logica per aggiornare la quantità 
-        return state;
+        let q = parseInt(quantity, 10);
+        if (isNaN(q) || q < 1) {
+          q = 1;
+        }
 
+        return state.map(item =>
+          item.name === product.name
+            ? { ...item, quantity: q }
+            : item
+        );
+      }
       default:
         return state;
     }
   }
 
-
-
-  //stati 
-  const [productsAll, setProducts] = useState(products)
-  const [cart, dispatch] = useReducer(cartReducer, []);
-
-
-  // funzione per aumentare la quantità
   function updateProductQuantity(product, newQuantity) {
-    let quantity = parseInt(newQuantity, 10);
-
-    // riporto a 1 se NaN o < 1
-    if (isNaN(quantity) || quantity < 1) {
-      quantity = 1;
-    }
-
-    setAddedProducts(prev =>
-      prev.map(item =>
-        item.name === product.name
-          ? { ...item, quantity }
-          : item
-      )
-    );
+    dispatch({
+      type: 'UPDATE_QUANTITY',
+      payload: {
+        product,
+        quantity: newQuantity,
+      },
+    });
   }
-
 
 
   //funzione calcolo totale
@@ -90,9 +86,10 @@ function App() {
   }
 
 
+
+
   return (
     <>
-
       <div>
         <h2>Tutti Prodotti</h2>
         {productsAll.map((p, index) => {
