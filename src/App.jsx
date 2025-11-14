@@ -40,9 +40,12 @@ function App() {
         return [...state, productWithQuantity];
       }
 
-      case 'REMOVE_ITEM':
-        // Logica per rimuovere un prodotto 
-        return state;
+      case 'REMOVE_ITEM': {
+        const product = action.payload;
+        return state.filter(p => p.name !== product.name);
+
+
+      }
 
       case 'UPDATE_QUANTITY':
         // Logica per aggiornare la quantità 
@@ -52,6 +55,7 @@ function App() {
         return state;
     }
   }
+
 
 
   //stati 
@@ -77,12 +81,7 @@ function App() {
     );
   }
 
-  // funzione per eliminare dal carrello 
-  function removeFromCart(product) {
-    setAddedProducts(prev =>
-      prev.filter(item => item.name !== product.name)
-    );
-  }
+
 
   //funzione calcolo totale
   const Totale = (arr) => {
@@ -123,7 +122,12 @@ function App() {
                   updateProductQuantity(p, e.target.value)
                 } /></span>
 
-              <button onClick={() => removeFromCart(p)}>Rimuovi dal carrello</button>
+              <button
+                onClick={() =>
+                  dispatch({ type: 'REMOVE_ITEM', payload: p })
+                }
+
+              >Rimuovi dal carrello</button>
             </div>
           ))}
           <p>Totale prodotti nel carrello: {Totale(cart)}€</p>
