@@ -10,17 +10,34 @@ function App() {
     { name: 'Pasta', price: 0.7 },
   ];
 
+  //stati 
   const [productsAll, setProducts] = useState(products)
+  const [addedProducts, setAddedProducts] = useState([])
+
+  //Funzione per aggiungere al carrello
+  function addToCart(p) {
+    setAddedProducts([...addedProducts, p]);
+  }
 
   return (
     <>
       <div>
         <h2>Carrello</h2>
+        {addedProducts.map((p, index) => {
+          return (
+            <p key={index}>{`Nome: `}{p.name}{` Prezzo: `}{p.price} </p>
+          )
+        })}
       </div>
       <div>
         <h2>Tutti Prodotti</h2>
         {productsAll.map((p, index) => {
-          return <p key={index}>{p.name}</p>
+          return (
+            <div key={index}>
+              <p>Nome: {p.name} — Prezzo: {p.price}€</p>
+              <button onClick={() => addToCart(p)}>Aggiungi al carrello</button>
+            </div>
+          )
         })}
       </div>
     </>
