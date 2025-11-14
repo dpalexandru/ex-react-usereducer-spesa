@@ -33,18 +33,7 @@ function App() {
 
   return (
     <>
-      <div>
-        <h2>Carrello</h2>
-        {addedProducts.map((p, index) => {
-          return (
-            <div key={index}>
-              <span >{`Nome: `}{p.name}{` Prezzo: `}{p.price} </span>
 
-              <span>{`Quantittà: `}{p.quantity}</span>
-            </div>
-          )
-        })}
-      </div>
       <div>
         <h2>Tutti Prodotti</h2>
         {productsAll.map((p, index) => {
@@ -56,6 +45,17 @@ function App() {
           )
         })}
       </div>
+      {addedProducts.length > 0 && (
+        <div>
+          <h2>Carrello</h2>
+          {addedProducts.map((p, index) => (
+            <div key={index}>
+              <span>Nome: {p.name} — Prezzo: {p.price}€</span>
+              <span> Quantità: {p.quantity}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </>
   )
 }
