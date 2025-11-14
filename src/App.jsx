@@ -16,6 +16,18 @@ function App() {
 
   //Funzione per aggiungere al carrello
   function addToCart(p) {
+    //Aggiungo campo quantity se non presente
+    if (!p.quantity) {
+      p = { ...p, quantity: 1 }
+    }
+    // controllo se esiste 
+    const exists = addedProducts.some(item => item.name === p.name);
+
+    if (exists) {
+      // Se esiste già non aggiungo nulla
+      return;
+    }
+
     setAddedProducts([...addedProducts, p]);
   }
 
@@ -25,7 +37,11 @@ function App() {
         <h2>Carrello</h2>
         {addedProducts.map((p, index) => {
           return (
-            <p key={index}>{`Nome: `}{p.name}{` Prezzo: `}{p.price} </p>
+            <div key={index}>
+              <span >{`Nome: `}{p.name}{` Prezzo: `}{p.price} </span>
+
+              <span>{`Quantittà: `}{p.quantity}</span>
+            </div>
           )
         })}
       </div>
