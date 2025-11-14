@@ -50,6 +50,13 @@ function App() {
     );
   }
 
+  //funzione calcolo totale
+
+  const Totale = (arr) => {
+    const totale = arr.reduce((acc, cur) => acc + (cur.price * cur.quantity), 0)
+    return totale.toFixed(2);
+  }
+
   return (
     <>
 
@@ -74,6 +81,8 @@ function App() {
               <button onClick={() => removeFromCart(p)}>Rimuovi dal carrello</button>
             </div>
           ))}
+          <p>Totale prodotti nel carrello: {Totale(addedProducts)}€</p>
+
         </div>
       )}
     </>
