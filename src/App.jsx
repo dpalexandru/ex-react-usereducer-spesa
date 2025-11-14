@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useReducer } from 'react'
 import './App.css'
 
 function App() {
@@ -10,30 +10,54 @@ function App() {
     { name: 'Pasta', price: 0.7 },
   ];
 
+
+  // R E D U C E R 
+
+
+  function cartReducer(state, action) {
+    switch (action.type) {
+      case 'ADD_ITEM': {
+        const product = action.payload;
+
+        // Se il prodotto è già nel carrello
+        const exists = state.some(item => item.name === product.name);
+
+        if (exists) {
+          // Aumento la quantity di 1
+          return state.map(item =>
+            item.name === product.name
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          );
+        }
+
+        // Se non ha quantity, la imposto a 1
+        const productWithQuantity = product.quantity
+          ? product
+          : { ...product, quantity: 1 };
+
+        // Ritorno un nuovo array con il nuovo prodotto aggiunto
+        return [...state, productWithQuantity];
+      }
+
+      case 'REMOVE_ITEM':
+        // Logica per rimuovere un prodotto 
+        return state;
+
+      case 'UPDATE_QUANTITY':
+        // Logica per aggiornare la quantità 
+        return state;
+
+      default:
+        return state;
+    }
+  }
+
+
   //stati 
   const [productsAll, setProducts] = useState(products)
-  const [addedProducts, setAddedProducts] = useState([])
+  const [cart, dispatch] = useReducer(cartReducer, []);
 
-  //Funzione per aggiungere al carrello
-  function addToCart(p) {
-    //Aggiungo campo quantity se non presente
-    if (!p.quantity) {
-      p = { ...p, quantity: 1 }
-    }
-    // controllo se esiste 
-    const exists = addedProducts.some(item => item.name === p.name);
-
-
-    if (exists) {
-      // trovo il prodotto attuale nel carrello
-      const current = addedProducts.find(item => item.name === p.name);
-      // aumento la quantità di 1 usando la stessa funzione
-      updateProductQuantity(p, current.quantity + 1);
-      return;
-    }
-
-    setAddedProducts([...addedProducts, p]);
-  }
 
   // funzione per aumentare la quantità
   function updateProductQuantity(product, newQuantity) {
@@ -76,15 +100,18 @@ function App() {
           return (
             <div key={index}>
               <p>Nome: {p.name} — Prezzo: {p.price}€</p>
-              <button onClick={() => addToCart(p)}>Aggiungi al carrello</button>
+              <button onClick={() =>
+                dispatch({ type: 'ADD_ITEM', payload: p })
+              }
+              >Aggiungi al carrello</button>
             </div>
           )
         })}
       </div>
-      {addedProducts.length > 0 && (
+      {cart.length > 0 && (
         <div>
           <h2>Carrello</h2>
-          {addedProducts.map((p, index) => (
+          {cart.map((p, index) => (
             <div key={index}>
               <span>Nome: {p.name} — Prezzo: {p.price}€</span>
 
@@ -99,7 +126,7 @@ function App() {
               <button onClick={() => removeFromCart(p)}>Rimuovi dal carrello</button>
             </div>
           ))}
-          <p>Totale prodotti nel carrello: {Totale(addedProducts)}€</p>
+          <p>Totale prodotti nel carrello: {Totale(cart)}€</p>
 
         </div>
       )}
