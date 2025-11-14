@@ -23,9 +23,12 @@ function App() {
     // controllo se esiste 
     const exists = addedProducts.some(item => item.name === p.name);
 
+
     if (exists) {
-      //se asiste aumento la quantità di uno
-      updateProductQuantity(p)
+      // trovo il prodotto attuale nel carrello
+      const current = addedProducts.find(item => item.name === p.name);
+      // aumento la quantità di 1 usando la stessa funzione
+      updateProductQuantity(p, current.quantity + 1);
       return;
     }
 
@@ -33,11 +36,18 @@ function App() {
   }
 
   // funzione per aumentare la quantità
-  function updateProductQuantity(product) {
+  function updateProductQuantity(product, newQuantity) {
+    let quantity = parseInt(newQuantity, 10);
+
+    // riporto a 1 se NaN o < 1
+    if (isNaN(quantity) || quantity < 1) {
+      quantity = 1;
+    }
+
     setAddedProducts(prev =>
       prev.map(item =>
         item.name === product.name
-          ? { ...item, quantity: item.quantity + 1 }
+          ? { ...item, quantity }
           : item
       )
     );
@@ -51,11 +61,11 @@ function App() {
   }
 
   //funzione calcolo totale
-
   const Totale = (arr) => {
     const totale = arr.reduce((acc, cur) => acc + (cur.price * cur.quantity), 0)
     return totale.toFixed(2);
   }
+
 
   return (
     <>
@@ -77,7 +87,15 @@ function App() {
           {addedProducts.map((p, index) => (
             <div key={index}>
               <span>Nome: {p.name} — Prezzo: {p.price}€</span>
-              <span> Quantità: {p.quantity}</span>
+
+              <span> Quantità:     <input
+                type="number"
+                min="0"
+                value={p.quantity}
+                onChange={(e) =>
+                  updateProductQuantity(p, e.target.value)
+                } /></span>
+
               <button onClick={() => removeFromCart(p)}>Rimuovi dal carrello</button>
             </div>
           ))}
